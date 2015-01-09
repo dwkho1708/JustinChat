@@ -24,19 +24,6 @@ var numUsers = 0;
 io.on('connection', function(socket) {
 	var addedUser = false;
 
-	var delivery = dl.listen(socket);
-	delivery.on('receive.success', function(file) {
-
-		fs.writeFile(file.name, file.buffer, function(err) {
-			if (err) {
-				console.log('File could not be saved.');
-			} else {
-				console.log('File saved.');
-			}
-			;
-		});
-	});
-
 	// when the client emits 'new message', this listens and executes
 	socket.on('new message', function(data) {
 		// we tell the client to execute 'new message'
@@ -96,4 +83,29 @@ io.on('connection', function(socket) {
 			});
 		}
 	});
-});
+	
+	var delivery = dl.listen(socket);
+	var fileList = {};
+	var fileDir = "./public/fileRepository/";
+    delivery.on('receive.success',function(file){
+	  
+      fs.writeFile(fileDir+file.name,file.buffer, function(err){
+        if(err){
+          console.log('File could not be saved.');
+        }else{
+		  fileList[file.name] = fileDir+file.name;
+          console.log('File saved.');
+		  var date = new Date();
+		  
+		  io.emit('new file uploaded', {
+			timestamp : date.toFormat('HH24:MI:SS'),
+			username : socket.username,
+			message : file.name + ' was uploaded.',
+			filename : file.name,
+			filepath : 'fileRepository/'+file.name
+		  });
+		}
+      });
+    });
+
+ });

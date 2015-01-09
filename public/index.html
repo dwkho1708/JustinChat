@@ -2,25 +2,31 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>♨BIOK 카페♨</title>
+<title>BIOK Chat</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<script>
-<!--
-  var entered = 0;
--->
-</script>
 
-<body ondragenter="entered++;document.getElementById('uploadelement').style.display='block'" ondragleave="entered--;if (!entered) document.getElementById('uploadelement').style.display='none'">
-  <form method="post" enctype="multipart/form-data" id="uploadform" >
-    Things can be dragged and dropped here!
-    <input type="file" id="uploadelement" name="dragupload[]" multiple="multiple" onchange="if (this.value) { document.getElementById('uploadform').submit(); }" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;" />
-  </form>
+<body>
   <ul class="pages">
 		<li class="chat page">
 			<div class="chatArea">
 				<ul class="messages"></ul>
-			</div> <input class="inputMessage" placeholder="Type here..." />
+			</div> 
+			<table class="inputTable">
+				<tr>
+					<td style="width:80%;"><input class="inputMessage" placeholder="Type here..." ></td>
+					<td style="width:20%;">
+						<form id="fileForm" class="inputFileBox">
+							<table>
+								<tr>
+									<td><input id="fileInput" class="inputSelectFile" type="file"></td>
+									<td><button class="inputSelectedFile" type="button">Upload File</button></td>
+								</tr>
+							</table>
+						</form>
+					</td>
+				</tr>
+			</table>
 		</li>
 		<li class="login page">
 			<div class="form">
@@ -33,5 +39,6 @@
 	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="main.js"></script>
+	<script src="delivery.js"></script>
 </body>
 </html>

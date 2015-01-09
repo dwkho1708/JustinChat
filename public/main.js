@@ -370,15 +370,49 @@ $(function() {
 	var delivery = new Delivery(socket);
 
 	delivery.on('delivery.connect', function(delivery) {
-		$("input[type=submit]").click(function(evt) {
+		$("button[type=button]").click(function(evt) {
 			var file = $("input[type=file]")[0].files[0];
 			delivery.send(file);
 			evt.preventDefault();
 		});
 	});
 
-	delivery.on('send.success', function(fileUID) {
-		console.log("file was successfully sent.");
+	delivery.on('receive.start',function(fileUID){
+		console.log('receiving a file!');
 	});
+			
+	delivery.on('send.success', function(fileUID) {
+		console.log(" file was successfully sent.");
+	});	
+	
+	socket.on('new file uploaded', function(data) {
+		if (isFocus !== true)
+			notifyMe(data);
+		addFileMessage(data);
+	});
+	
+	function addFileMessage(data, options) {
+		// Don't fade the message in if there is an 'X was typing'
+		var $typingMessages = getTypingMessages(data);
+		options = options || {};
+		if ($typingMessages.length !== 0) {
+			options.fade = false;
+			$typingMessages.remove();
+		}
 
+		var $timestampDiv = $('<span class="timestamp"/>').text(data.timestamp);
+		var $usernameDiv = $('<span class="username"/>').text(data.username)
+				.css('color', getUsernameColor(data.username));
+		var $messageBodyDiv = $('<span class="messageBody">')
+				.text(data.message);
+		var $fileDownloadMessageDiv = $('<a href="'+data.filepath+'" download="'+data.filename+'">').text('download');
+
+		var typingClass = data.typing ? 'typing' : '';
+		var $messageDiv = $('<li class="message"/>').data('username',
+				data.username).addClass(typingClass).append($timestampDiv,
+				$usernameDiv, $messageBodyDiv, $fileDownloadMessageDiv);
+
+		addMessageElement($messageDiv, options);
+	}
+	
 });
